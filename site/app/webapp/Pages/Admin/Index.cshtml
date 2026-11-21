@@ -1,0 +1,33 @@
+@page
+@model __APP__.Pages.Admin.IndexModel
+
+@{
+    ViewData["Title"] = "Administration";
+}
+
+<h1>Administration</h1>
+
+<p>The accounts of this app. Only the Administrator role opens this page.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Email confirmed</th>
+            <th>Two-factor</th>
+            <th>Locked out</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var account in Model.Accounts) {
+        <tr>
+            <td>@account.Email</td>
+            <td>@account.Roles</td>
+            <td>@(account.EmailConfirmed ? "Yes" : "No")</td>
+            <td>@(account.TwoFactorEnabled ? "On" : "Off")</td>
+            <td>@(account.LockedOut ? "Yes" : "No")</td>
+        </tr>
+}
+    </tbody>
+</table>

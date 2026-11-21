@@ -1,0 +1,55 @@
+@page "/Admin"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using __APP__.Data
+@attribute [Authorize(Roles = "Administrator")]
+@inject UserManager<ApplicationUser> UserManager
+
+@* A page only the Administrator role may open: the accounts of the app, read only. Added by the build of the test site. *@
+
+<PageTitle>Administration</PageTitle>
+
+<h1>Administration</h1>
+
+<p>The accounts of this app. Only the Administrator role opens this page.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Email confirmed</th>
+            <th>Two-factor</th>
+            <th>Locked out</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var account in accounts)
+        {
+            <tr>
+                <td>@account.Email</td>
+                <td>@account.Roles</td>
+                <td>@(account.EmailConfirmed ? "Yes" : "No")</td>
+                <td>@(account.TwoFactorEnabled ? "On" : "Off")</td>
+                <td>@(account.LockedOut ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private record AccountRow(string Email, string Roles, bool EmailConfirmed, bool TwoFactorEnabled, bool LockedOut);
+
+    private List<AccountRow> accounts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        foreach (var user in await UserManager.Users.OrderBy(u => u.Email).ToListAsync())
+        {
+            var roles = string.Join(", ", await UserManager.GetRolesAsync(user));
+            var locked = user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow;
+            accounts.Add(new AccountRow(user.Email ?? user.UserName ?? string.Empty, roles, user.EmailConfirmed, user.TwoFactorEnabled, locked));
+        }
+    }
+}

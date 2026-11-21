@@ -1,0 +1,14 @@
+@page
+@model __APP__.Pages.StatusCodeModel
+
+@{
+    ViewData["Title"] = $"{Model.OriginalStatusCode} {Model.ReasonPhrase}";
+}
+
+<h1 class="text-danger">@Model.OriginalStatusCode @Model.ReasonPhrase</h1>
+
+@if (!string.IsNullOrEmpty(Model.OriginalPathAndQuery))
+{
+    <p>The request for <code>@Model.OriginalPathAndQuery</code> answered with this status.</p>
+}
+<p><a asp-page="/Index">Back to the home page</a></p>
