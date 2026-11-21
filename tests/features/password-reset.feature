@@ -10,7 +10,7 @@ Feature: A forgotten password and the confirmation mail
     When I ask for a password reset link for "user"
     Then I should see "Please check your email to reset your password."
     And an email with the subject "Reset your password" should be sent to "user"
-    And the email with the subject "Reset your password" to "user" should contain "If you didn't request a password reset, you can ignore this email."
+    And the email with the subject "Reset your password" to "user" should contain "Please reset your password by clicking here"
     When I open the "clicking here" link of the email to "user"
     And I reset the password of "user" on the reset page
     Then I should see "Your password has been reset."

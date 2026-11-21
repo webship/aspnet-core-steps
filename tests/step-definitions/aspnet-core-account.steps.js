@@ -267,11 +267,38 @@ Then(/^(I |we )*should see the status message "([^"]*)"$/, async function (prono
 // The password and the email of the signed-in account, and their way back
 // ---------------------------------------------------------------------------
 
+/**
+ * The three password fields of the Password page, by their labels ("Current password", "New password", "Confirm new
+ * password"; a Blazor Web App on .NET 10 writes "Old password" and "Confirm password"), else in the order of the form.
+ */
+async function passwordPageFields(world) {
+  const byLabel = async (labels) => {
+    for (const label of labels) {
+      const field = world.page.getByLabel(label, { exact: true });
+      if (await field.count()) return field.first();
+    }
+    return null;
+  };
+  const current = await byLabel(['Current password', 'Old password']);
+  const next = await byLabel(['New password']);
+  const confirm = await byLabel(['Confirm new password', 'Confirm password']);
+  if (current && next && confirm) return [current, next, confirm];
+  const inputs = world.page.locator('main form input[type="password"]');
+  if ((await inputs.count()) >= 3) return [inputs.nth(0), inputs.nth(1), inputs.nth(2)];
+  const labels = await h.visibleFieldLabels(world);
+  throw friendly({ message: `The Password page has no current, new and confirmation password fields (${world.page.url()}). The fields are: ${h.listed(labels)}.`, hint: 'The Password page of the Manage pages asks for the current password, the new one and its confirmation.' });
+}
+
 /** Change the password of the signed-in account on its Password page, from its current password to another. */
 async function changePassword(world, handle, to) {
   const account = h.resolveUser(world, handle);
   await openAccountPage(world, 'Manage/ChangePassword');
-  await fillAndSend(world, [['Current password', account.password], ['New password', to], ['Confirm new password', to]], null, 'Changing the password');
+  const [current, next, confirm] = await passwordPageFields(world);
+  await current.fill(account.password);
+  await next.fill(to);
+  await confirm.fill(to);
+  const button = current.locator('xpath=ancestor::form[1]').locator('button[type="submit"], input[type="submit"]').filter({ visible: true }).first();
+  await h.pressAndWait(world, button, { label: 'Changing the password' });
   const messages = (await h.pageMessages(world)).map((m) => m.text);
   if (!messages.some((m) => /password has been changed/i.test(m))) {
     const errors = [...(await h.formErrors(world)), ...(await h.refusedFields(world)).flatMap((f) => f.errors)];

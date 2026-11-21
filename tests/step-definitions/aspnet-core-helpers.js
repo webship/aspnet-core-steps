@@ -480,9 +480,10 @@ async function visibleFieldLabels(world) {
 
 // What a server-rendered form prints next to a field it refused: the message of a validation tag
 // (`span[data-valmsg-for="<name>"]`, class `field-validation-error` once it holds one), of a validation component
-// (`.validation-message`), or of a theme (`.invalid-feedback`, `.help-block`), or an element the field's
-// `aria-describedby` names.
-const ERROR_LINES = '.field-validation-error, .validation-message, .invalid-feedback, .help-block, .help-inline, .error-message, [id$="-error"]';
+// (`.validation-message`, or only the class the page gives it, `.text-danger`, as a Blazor Web App on .NET 10 writes
+// it), or of a theme (`.invalid-feedback`, `.help-block`), or an element the field's `aria-describedby` names. An
+// empty line is no message (a valid field keeps an empty `span.text-danger` for one).
+const ERROR_LINES = '.field-validation-error, .validation-message, .text-danger, .invalid-feedback, .help-block, .help-inline, .error-message, [id$="-error"]';
 
 /**
  * The error messages the page shows for a field: the validation message named after the field
@@ -550,7 +551,8 @@ async function refusedFields(world) {
 
 /**
  * The errors a form shows for itself, not for one field: the validation summary (`.validation-summary-errors li`,
- * or the `ul.validation-errors` of a Blazor form) and the error status message of the page ("Error: ...").
+ * the `li.validation-message` items of a Blazor form's summary) and the error status message of the page
+ * ("Error: ...").
  */
 async function formErrors(world) {
   return world.page.evaluate(() => {
@@ -560,7 +562,7 @@ async function formErrors(world) {
       return style.display !== 'none' && style.visibility !== 'hidden' && (box.width > 0 || box.height > 0);
     };
     const out = [];
-    for (const n of document.querySelectorAll('.validation-summary-errors li, ul.validation-errors li, .alert-danger')) {
+    for (const n of document.querySelectorAll('.validation-summary-errors li, ul.validation-errors li, li.validation-message, .alert-danger')) {
       if (!shown(n)) continue;
       const copy = n.cloneNode(true);
       copy.querySelectorAll('button').forEach((b) => b.remove());
