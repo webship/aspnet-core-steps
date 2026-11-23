@@ -48,7 +48,7 @@ that must fail and a development run; see [The test apps](#the-test-apps) and
 
 ## From nothing to a green run
 
-What the machine needs: Docker, [DDEV](https://ddev.com), git, Python 3, and Node.js 20 or later with npm. The app
+What the machine needs: Docker, [DDEV](https://ddev.com), git, Python 3, and Node.js 24 or later with npm. The app
 is made, built and run in its container, with the .NET SDK of its official image: no .NET on the machine, no public
 domain and no account anywhere.
 
@@ -256,7 +256,7 @@ English (the steps read the words of the account pages: "Invalid login attempt."
 
 ## Requirements
 
-- Node.js 20 or later
+- Node.js 24 or later
 - A webship-js 2.0 test project (webship-js 2.0.16 or later)
 - An ASP.NET Core app with individual accounts (the default account pages, or the account pages of a Blazor Web
   App; the steps hold on .NET 11 and on the long-term-support .NET 10), its accounts for the suite, and a mail catcher
