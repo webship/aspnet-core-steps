@@ -1,6 +1,6 @@
 {
   "name": "@webship-js/aspnet-core-steps",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Cucumber step definitions for the account pages every ASP.NET Core app with individual accounts has, a plugin for webship-js (Playwright and Cucumber): log in and out and the refusals of the login form, two-factor sign-in with a code worked out from the authenticator key, a locked-out account, the confirmation mail and the password reset through the mail catcher, the Manage pages (profile, email, password, two-factor set-up, personal data), registration refusals, a page only a role may open and the access-denied page, the anti-forgery token of every form, the app's error page and status code pages without debug information, and the validation messages of server-rendered forms.",
   "main": "tests/step-definitions/aspnet-core-session.steps.js",
   "files": [
